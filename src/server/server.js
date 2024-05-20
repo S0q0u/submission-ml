@@ -13,9 +13,9 @@ const InputError = require('../exceptions/InputError');
       cors: {
         origin: ['*'],
       },
-      payload: {
-        maxBytes: 1000000,
-      },
+      //   payload: {
+      //     maxBytes: 1000000,
+      //   },
     },
   });
 
@@ -30,7 +30,7 @@ const InputError = require('../exceptions/InputError');
     if (response instanceof InputError) {
       const newResponse = h.response({
         status: 'fail',
-        message: `Terjadi kesalahan dalam melakukan prediksi`,
+        message: response.message,
       });
       newResponse.code(response.statusCode);
       return newResponse;
@@ -42,24 +42,6 @@ const InputError = require('../exceptions/InputError');
         message: response.message,
       });
       newResponse.code(response.output.statusCode);
-      return newResponse;
-    }
-
-    if (request.payload && request.payload.length > 1000000) {
-      const newResponse = h.response({
-        status: 'fail',
-        message: 'Payload content length greater than maximum allowed: 1000000',
-      });
-      newResponse.code(413);
-      return newResponse;
-    }
-
-    if (response.statusCode === 400 && response.message === 'Bad Request') {
-      const newResponse = h.response({
-        status: 'fail',
-        message: 'Terjadi kesalahan dalam melakukan prediksi',
-      });
-      newResponse.code(400);
       return newResponse;
     }
 
